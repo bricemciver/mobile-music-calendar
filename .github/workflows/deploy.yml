@@ -1,0 +1,48 @@
+# .github/workflows/deploy.yml
+name: Deploy to Google Apps Script
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Create .clasprc.json
+        # This secret should contain the contents of your local ~/.clasprc.json file.
+        # 1. Run `npx clasp login` locally to generate the file.
+        # 2. Go to your GitHub repository's Settings > Secrets and variables > Actions.
+        # 3. Create a new repository secret named CLASPRC_JSON.
+        # 4. Paste the entire content of your ~/.clasprc.json file into the secret's value.
+        run: echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+
+      - name: Create .clasp.json
+        # This secret should contain the contents of your project's .clasp.json file.
+        run: echo '${{ secrets.CLASP_JSON }}' > .clasp.json
+
+      - name: Verify credentials and config
+        run: |
+          echo "Verifying that credential and config files were created..."
+          if [ -s ~/.clasprc.json ] && [ -s .clasp.json ]; then
+            echo "Credential and config files created successfully and are not empty."
+          else
+            echo "Error: .clasprc.json or .clasp.json is either missing or empty."
+            echo "Please ensure the CLASPRC_JSON and CLASP_JSON secrets are set correctly."
+            exit 1
+          fi
+
+      - name: Deploy
+        run: npm run deploy
