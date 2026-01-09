@@ -233,7 +233,7 @@ const createEventId = (title: string, startTime: Date): string => {
  * Main function to sync events from API to Google Calendar
  * Can be set up as a trigger to run periodically
  */
-export const syncEventsToCalendar = () => {
+const syncEventsToCalendar = () => {
   try {
     const config = getConfig();
 
