@@ -45,5 +45,4 @@ jobs:
           fi
 
       - name: Deploy
-        # The '-f' flag forces the push, overwriting the existing script.
-        run: npm run deploy -- -f
+        run: npm run deploy
