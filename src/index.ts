@@ -114,10 +114,9 @@ const buildExistingEventsMap = (
  * Generates the description string for a calendar event.
  */
 const createEventDescription = (apiEvent: Event): string => {
-  const alertStr = apiEvent.alert ? `Alert: ${apiEvent.alert}\n` : "";
   const notesStr = apiEvent.notes ? `Notes: ${apiEvent.notes}\n` : "";
   const sponsorStr = apiEvent.sponsor ? `Sponsor: ${apiEvent.sponsor}\n` : "";
-  return `${alertStr}${notesStr}${sponsorStr}`;
+  return `${notesStr}${sponsorStr}`;
 };
 
 /**
@@ -183,7 +182,8 @@ const processEvents = (
     const eventId = createEventId(apiEvent.location, startTime);
     processedIds.add(eventId);
 
-    const eventTitle = apiEvent.location;
+    const alertStr = apiEvent.alert ? `[${apiEvent.alert}] ` : "";
+    const eventTitle = `${alertStr}${apiEvent.location}`;
     const eventDescription = createEventDescription(apiEvent);
     const eventLocation = apiEvent.address;
 
