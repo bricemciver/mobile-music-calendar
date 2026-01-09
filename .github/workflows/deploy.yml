@@ -29,6 +29,17 @@ jobs:
         # 4. Paste the entire content of your ~/.clasprc.json file into the secret's value.
         run: echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
 
+      - name: Verify .clasprc.json
+        run: |
+          echo "Verifying that .clasprc.json was created..."
+          if [ -s ~/.clasprc.json ]; then
+            echo ".clasprc.json created successfully and is not empty."
+          else
+            echo "Error: .clasprc.json is either missing or empty."
+            echo "Please ensure the CLASPRC_JSON secret is set correctly in your repository settings."
+            exit 1
+          fi
+
       - name: Deploy
         # The '-f' flag forces the push, overwriting the existing script.
         run: npm run deploy -- -f
