@@ -29,14 +29,18 @@ jobs:
         # 4. Paste the entire content of your ~/.clasprc.json file into the secret's value.
         run: echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
 
-      - name: Verify .clasprc.json
+      - name: Create .clasp.json
+        # This secret should contain the contents of your project's .clasp.json file.
+        run: echo '${{ secrets.CLASP_JSON }}' > .clasp.json
+
+      - name: Verify credentials and config
         run: |
-          echo "Verifying that .clasprc.json was created..."
-          if [ -s ~/.clasprc.json ]; then
-            echo ".clasprc.json created successfully and is not empty."
+          echo "Verifying that credential and config files were created..."
+          if [ -s ~/.clasprc.json ] && [ -s .clasp.json ]; then
+            echo "Credential and config files created successfully and are not empty."
           else
-            echo "Error: .clasprc.json is either missing or empty."
-            echo "Please ensure the CLASPRC_JSON secret is set correctly in your repository settings."
+            echo "Error: .clasprc.json or .clasp.json is either missing or empty."
+            echo "Please ensure the CLASPRC_JSON and CLASP_JSON secrets are set correctly."
             exit 1
           fi
 
