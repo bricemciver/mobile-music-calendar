@@ -128,15 +128,20 @@ const updateExistingEvent = (
   eventTitle: string,
   eventDescription: string,
   eventLocation: string | undefined,
+  startTime: Date,
+  endTime: Date,
 ): boolean => {
   if (
     existingEvent.getTitle() !== eventTitle ||
     existingEvent.getDescription() !== eventDescription ||
-    existingEvent.getLocation() !== eventLocation
+    existingEvent.getLocation() !== eventLocation ||
+    existingEvent.getStartTime().getTime() !== startTime.getTime() ||
+    existingEvent.getEndTime().getTime() !== endTime.getTime()
   ) {
     existingEvent.setTitle(eventTitle);
     existingEvent.setDescription(eventDescription);
     existingEvent.setLocation(eventLocation ?? "");
+    existingEvent.setTime(startTime, endTime);
     return true;
   }
   return false;
@@ -186,6 +191,9 @@ const processEvents = (
     const eventTitle = `${alertStr}${apiEvent.location}`;
     const eventDescription = createEventDescription(apiEvent);
     const eventLocation = apiEvent.address;
+    const endTime = new Date(
+      startTime.getTime() + eventDurationMinutes * 60 * 1000,
+    );
 
     const existingEvent = existingEventsMap.get(eventId);
 
@@ -196,14 +204,13 @@ const processEvents = (
           eventTitle,
           eventDescription,
           eventLocation,
+          startTime,
+          endTime,
         )
       ) {
         stats.updated++;
       }
     } else {
-      const endTime = new Date(
-        startTime.getTime() + eventDurationMinutes * 60 * 1000,
-      );
       calendar.createEvent(eventTitle, startTime, endTime, {
         description: eventDescription,
         location: eventLocation,
